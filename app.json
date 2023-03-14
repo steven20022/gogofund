@@ -25,6 +25,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f67c31fd-8daf-4119-9231-daa7069c3a4d"
+      }
+    },
+    "owner": "elamj"
   }
 }
