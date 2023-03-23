@@ -1,0 +1,15 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-gogofund-staging-123519-authRole",
+      "UnauthRoleArn": "arn:aws:iam::507814012525:role/amplify-gogofund-staging-123519-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::507814012525:role/amplify-gogofund-staging-123519-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-gogofund-staging-123519-deployment",
+      "UnauthRoleName": "amplify-gogofund-staging-123519-unauthRole",
+      "StackName": "amplify-gogofund-staging-123519",
+      "StackId": "arn:aws:cloudformation:us-east-2:507814012525:stack/amplify-gogofund-staging-123519/d72fd320-c7e4-11ed-bd36-025e2c7ee0f4",
+      "AmplifyAppId": "d2ekpoamf2ypc7"
+    }
+  }
+}
