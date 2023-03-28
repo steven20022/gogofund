@@ -10,6 +10,11 @@
       "StackName": "amplify-gogofund-staging-123519",
       "StackId": "arn:aws:cloudformation:us-east-2:507814012525:stack/amplify-gogofund-staging-123519/d72fd320-c7e4-11ed-bd36-025e2c7ee0f4",
       "AmplifyAppId": "d2ekpoamf2ypc7"
+    },
+    "categories": {
+      "auth": {
+        "GoGoFund": {}
+      }
     }
   }
 }
