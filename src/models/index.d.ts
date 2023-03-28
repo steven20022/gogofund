@@ -6,6 +6,40 @@ import { LazyLoading, LazyLoadingDisabled, AsyncCollection } from "@aws-amplify/
 
 
 
+type EagerUser = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<User, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name: string;
+  readonly sub: string;
+  readonly Donations?: (Donations | null)[] | null;
+  readonly Fundraisers?: (Donations | null)[] | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyUser = {
+  readonly [__modelMeta__]: {
+    identifier: ManagedIdentifier<User, 'id'>;
+    readOnlyFields: 'createdAt' | 'updatedAt';
+  };
+  readonly id: string;
+  readonly name: string;
+  readonly sub: string;
+  readonly Donations: AsyncCollection<Donations>;
+  readonly Fundraisers: AsyncCollection<Donations>;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type User = LazyLoading extends LazyLoadingDisabled ? EagerUser : LazyUser
+
+export declare const User: (new (init: ModelInit<User>) => User) & {
+  copyOf(source: User, mutator: (draft: MutableModel<User>) => MutableModel<User> | void): User;
+}
+
 type EagerDonations = {
   readonly [__modelMeta__]: {
     identifier: ManagedIdentifier<Donations, 'id'>;
@@ -15,6 +49,7 @@ type EagerDonations = {
   readonly User: string;
   readonly Donation?: number | null;
   readonly fundraisersID: string;
+  readonly userID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -28,6 +63,7 @@ type LazyDonations = {
   readonly User: string;
   readonly Donation?: number | null;
   readonly fundraisersID: string;
+  readonly userID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -50,6 +86,7 @@ type EagerFundraisers = {
   readonly EndDate: string;
   readonly User: string;
   readonly Donations?: (Donations | null)[] | null;
+  readonly userID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -66,6 +103,7 @@ type LazyFundraisers = {
   readonly EndDate: string;
   readonly User: string;
   readonly Donations: AsyncCollection<Donations>;
+  readonly userID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

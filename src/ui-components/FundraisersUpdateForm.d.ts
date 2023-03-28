@@ -18,12 +18,14 @@ export declare type FundraisersUpdateFormInputValues = {
     Description?: string;
     Goal?: number;
     EndDate?: string;
+    userID?: string;
 };
 export declare type FundraisersUpdateFormValidationValues = {
     Name?: ValidationFunction<string>;
     Description?: ValidationFunction<string>;
     Goal?: ValidationFunction<number>;
     EndDate?: ValidationFunction<string>;
+    userID?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type FundraisersUpdateFormOverridesProps = {
@@ -32,6 +34,7 @@ export declare type FundraisersUpdateFormOverridesProps = {
     Description?: PrimitiveOverrideProps<TextAreaFieldProps>;
     Goal?: PrimitiveOverrideProps<TextFieldProps>;
     EndDate?: PrimitiveOverrideProps<TextFieldProps>;
+    userID?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type FundraisersUpdateFormProps = React.PropsWithChildren<{
     overrides?: FundraisersUpdateFormOverridesProps | undefined | null;

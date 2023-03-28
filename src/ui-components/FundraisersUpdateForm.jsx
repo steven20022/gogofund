@@ -34,6 +34,7 @@ export default function FundraisersUpdateForm(props) {
     Description: "",
     Goal: "",
     EndDate: "",
+    userID: "",
   };
   const [Name, setName] = React.useState(initialValues.Name);
   const [Description, setDescription] = React.useState(
@@ -41,6 +42,7 @@ export default function FundraisersUpdateForm(props) {
   );
   const [Goal, setGoal] = React.useState(initialValues.Goal);
   const [EndDate, setEndDate] = React.useState(initialValues.EndDate);
+  const [userID, setUserID] = React.useState(initialValues.userID);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     const cleanValues = fundraisersRecord
@@ -50,6 +52,7 @@ export default function FundraisersUpdateForm(props) {
     setDescription(cleanValues.Description);
     setGoal(cleanValues.Goal);
     setEndDate(cleanValues.EndDate);
+    setUserID(cleanValues.userID);
     setErrors({});
   };
   const [fundraisersRecord, setFundraisersRecord] = React.useState(fundraisers);
@@ -75,16 +78,16 @@ export default function FundraisersUpdateForm(props) {
       },
     ],
     EndDate: [{ type: "Required" }],
+    userID: [{ type: "Required" }],
   };
   const runValidationTasks = async (
     fieldName,
     currentValue,
     getDisplayValue
   ) => {
-    const value =
-      currentValue && getDisplayValue
-        ? getDisplayValue(currentValue)
-        : currentValue;
+    const value = getDisplayValue
+      ? getDisplayValue(currentValue)
+      : currentValue;
     let validationResponse = validateField(value, validations[fieldName]);
     const customValidator = fetchByPath(onValidate, fieldName);
     if (customValidator) {
@@ -106,6 +109,7 @@ export default function FundraisersUpdateForm(props) {
           Description,
           Goal,
           EndDate,
+          userID,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -165,6 +169,7 @@ export default function FundraisersUpdateForm(props) {
               Description,
               Goal,
               EndDate,
+              userID,
             };
             const result = onChange(modelFields);
             value = result?.Name ?? value;
@@ -192,6 +197,7 @@ export default function FundraisersUpdateForm(props) {
               Description: value,
               Goal,
               EndDate,
+              userID,
             };
             const result = onChange(modelFields);
             value = result?.Description ?? value;
@@ -223,6 +229,7 @@ export default function FundraisersUpdateForm(props) {
               Description,
               Goal: value,
               EndDate,
+              userID,
             };
             const result = onChange(modelFields);
             value = result?.Goal ?? value;
@@ -251,6 +258,7 @@ export default function FundraisersUpdateForm(props) {
               Description,
               Goal,
               EndDate: value,
+              userID,
             };
             const result = onChange(modelFields);
             value = result?.EndDate ?? value;
@@ -264,6 +272,34 @@ export default function FundraisersUpdateForm(props) {
         errorMessage={errors.EndDate?.errorMessage}
         hasError={errors.EndDate?.hasError}
         {...getOverrideProps(overrides, "EndDate")}
+      ></TextField>
+      <TextField
+        label="User id"
+        isRequired={true}
+        isReadOnly={false}
+        value={userID}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              Name,
+              Description,
+              Goal,
+              EndDate,
+              userID: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.userID ?? value;
+          }
+          if (errors.userID?.hasError) {
+            runValidationTasks("userID", value);
+          }
+          setUserID(value);
+        }}
+        onBlur={() => runValidationTasks("userID", userID)}
+        errorMessage={errors.userID?.errorMessage}
+        hasError={errors.userID?.hasError}
+        {...getOverrideProps(overrides, "userID")}
       ></TextField>
       <Flex
         justifyContent="space-between"

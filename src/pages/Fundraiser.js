@@ -1,40 +1,44 @@
-import { Button, Layout } from 'antd'
+import { Button, Layout, List } from 'antd'
 import { Content } from 'antd/es/layout/layout'
 import Sider from 'antd/es/layout/Sider'
-import React from 'react'
+import React, { useState } from 'react'
 import funds from '../TempData/funds.json'
+import Donation from '../ui-components/Donation'
 
 const FundraiserPage = (props) => {
 
-    const fund = 
-    [{
-        "id": "bdddd8ff-e626-4548-915b-5128e1eb7d25",
-        "Name": "Temp Fund",
-        "Description": "A Temp Fund",
-        "Goal": 1000,
-        "EndDate": "2023-03-31",
-        "User": "Elamj1",
-        "userID": "ba0e07fa-4a98-4c5e-be89-90f22acd3bca",
-        "createdAt": "2023-03-27T13:37:15.612Z",
-        "updatedAt": "2023-03-27T13:37:15.612Z"
-    }]
+    const [toggle, setToggle] = useState(false)
+    const [brickCount, setBrickCount] = useState(1)
 
     return (
         <Layout>
-            <Sider>
+            <Sider style={{height: "100%"}}>
                 <h1 style={{color: 'white'}} >Title: {funds[0].Name}</h1>
                 <p style={{color: 'white'}} >Description: {funds[0].Description}</p>
                 <p style={{color: 'white'}} >Goal: {funds[0].Goal}</p>
                 <p style={{color: 'white'}} >EndDate: {funds[0].EndDate}</p>
-                <Button>Donate</Button>
+                <Button onClick={setBrickCount(brickCount+1)}> Donate Now </Button>
             </Sider>
-            <Content>
-
+            <Content style={{backgroundColor: 'white'}}>
+                <List 
+                    dataSource={new Array(brickCount).fill(null).map((_, index) => {
+                        const key = index + 1;
+                        return {
+                          key,
+                          label: `${key}`,
+                        };
+                      })}
+            
+                    renderItem={(item) => {
+                        <List.Item style={{justifyItems: 'flex-start'}}>
+                            <img src='../images/images.jpg' />
+                        </List.Item>
+                    }}
+                />
             </Content>
         </Layout>
         
     )
 }
-
 
 export default FundraiserPage
