@@ -46,7 +46,6 @@ type EagerDonations = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
-  readonly User: string;
   readonly Donation?: number | null;
   readonly fundraisersID: string;
   readonly userID: string;
@@ -60,7 +59,6 @@ type LazyDonations = {
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
-  readonly User: string;
   readonly Donation?: number | null;
   readonly fundraisersID: string;
   readonly userID: string;

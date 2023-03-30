@@ -14,6 +14,9 @@
     "categories": {
       "auth": {
         "GoGoFund": {}
+      },
+      "storage": {
+        "s3gogofundstoragea41f4d20": {}
       }
     }
   }

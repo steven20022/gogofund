@@ -1,0 +1,26 @@
+type User @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  sub: String!
+  Donations: [Donations] @hasMany(indexName: "byUser", fields: ["id"])
+  Fundraisers: [Donations] @hasMany(indexName: "byUser", fields: ["id"])
+}
+
+type Donations @model @auth(rules: [{allow: public, operations: [create, read]}]) {
+  id: ID!
+  Donation: Int
+  fundraisersID: ID! @index(name: "byFundraisers")
+  userID: ID! @index(name: "byUser")
+}
+
+type Fundraisers @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  Name: String!
+  Description: String!
+  Goal: Float!
+  EndDate: AWSDate!
+  User: String!
+  Donations: [Donations] @hasMany(indexName: "byFundraisers", fields: ["id"])
+  userID: ID! @index(name: "byUser")
+}
+ 

@@ -6,8 +6,10 @@ import { BrowserRouter as Router, Routes, Route, Link}
 import Home from './pages/Home';
 import Discover from './pages/Discover';
 import Account from './pages/Account';
-import { Menu, MenuButton, MenuItem } from '@aws-amplify/ui-react';
+import { Menu, MenuButton, MenuItem, TabItem, Tabs } from '@aws-amplify/ui-react';
 import FundraiserPage from './pages/Fundraiser';
+import '@aws-amplify/ui-react/styles.css';
+
 
 
 function AppRouter() {
@@ -22,7 +24,7 @@ function AppRouter() {
   
     return (
         <Router>
-            <Menu isOpen={isOpen} onOpenChange={handleOpenChange}>
+            <Menu isOpen={isOpen} onOpenChange={handleOpenChange} style={{justifyContent: 'center'}} >
                 <MenuItem >
                     <Link to="/" onClick={() => {closeMenu()}}> Home </Link>
                 </MenuItem>

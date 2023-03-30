@@ -1,0 +1,13 @@
+{
+  "resourceName": "s3gogofundstoragea41f4d20",
+  "bucketName": "gogofund-storage-a41f4d20",
+  "policyUUID": "0ca2900b",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "READ"
+  ],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "DELETE"
+  ]
+}

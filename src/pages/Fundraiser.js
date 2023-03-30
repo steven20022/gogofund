@@ -1,14 +1,30 @@
-import { Button, Layout, List } from 'antd'
+import { Alert, Button, Image, Layout, List } from 'antd'
 import { Content } from 'antd/es/layout/layout'
 import Sider from 'antd/es/layout/Sider'
 import React, { useState } from 'react'
 import funds from '../TempData/funds.json'
 import Donation from '../ui-components/Donation'
+import imgsrc from '../images/images.jpg'
 
 const FundraiserPage = (props) => {
 
-    const [toggle, setToggle] = useState(false)
+    // const [toggle, setToggle] = useState(false)
     const [brickCount, setBrickCount] = useState(1)
+
+    console.log(brickCount);
+
+    function onBrickPress(label) {
+        alert(label)
+    }
+
+    const genBricks = Array(brickCount).fill().map((_, index) => {
+        return {
+            index,
+            content: <img src={imgsrc} onClick={() => onBrickPress("This is Brick Number " + (index + 1))}></img>
+        }
+    })
+
+    console.log(genBricks);
 
     return (
         <Layout>
@@ -17,23 +33,15 @@ const FundraiserPage = (props) => {
                 <p style={{color: 'white'}} >Description: {funds[0].Description}</p>
                 <p style={{color: 'white'}} >Goal: {funds[0].Goal}</p>
                 <p style={{color: 'white'}} >EndDate: {funds[0].EndDate}</p>
-                <Button onClick={setBrickCount(brickCount+1)}> Donate Now </Button>
+                <Button onClick={() => setBrickCount(brickCount+1)}> Donate Now </Button>
             </Sider>
             <Content style={{backgroundColor: 'white'}}>
                 <List 
-                    dataSource={new Array(brickCount).fill(null).map((_, index) => {
-                        const key = index + 1;
-                        return {
-                          key,
-                          label: `${key}`,
-                        };
-                      })}
+                    dataSource={ genBricks }
             
-                    renderItem={(item) => {
-                        <List.Item style={{justifyItems: 'flex-start'}}>
-                            <img src='../images/images.jpg' />
-                        </List.Item>
-                    }}
+                    renderItem={(item) => 
+                            item.content
+                    }
                 />
             </Content>
         </Layout>
