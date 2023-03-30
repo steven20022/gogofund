@@ -8,10 +8,10 @@
 import * as React from "react";
 import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
 import { getOverrideProps } from "@aws-amplify/ui-react/internal";
-import { User } from "../models";
+import { Donations } from "../models";
 import { fetchByPath, validateField } from "./utils";
 import { DataStore } from "aws-amplify";
-export default function UserCreateForm(props) {
+export default function DonationsCreateForm(props) {
   const {
     clearOnSuccess = true,
     onSuccess,
@@ -23,20 +23,16 @@ export default function UserCreateForm(props) {
     ...rest
   } = props;
   const initialValues = {
-    name: "",
-    sub: "",
+    Donation: "",
   };
-  const [name, setName] = React.useState(initialValues.name);
-  const [sub, setSub] = React.useState(initialValues.sub);
+  const [Donation, setDonation] = React.useState(initialValues.Donation);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
-    setName(initialValues.name);
-    setSub(initialValues.sub);
+    setDonation(initialValues.Donation);
     setErrors({});
   };
   const validations = {
-    name: [{ type: "Required" }],
-    sub: [{ type: "Required" }],
+    Donation: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -63,8 +59,7 @@ export default function UserCreateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          name,
-          sub,
+          Donation,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -94,7 +89,7 @@ export default function UserCreateForm(props) {
               modelFields[key] = undefined;
             }
           });
-          await DataStore.save(new User(modelFields));
+          await DataStore.save(new Donations(modelFields));
           if (onSuccess) {
             onSuccess(modelFields);
           }
@@ -107,58 +102,36 @@ export default function UserCreateForm(props) {
           }
         }
       }}
-      {...getOverrideProps(overrides, "UserCreateForm")}
+      {...getOverrideProps(overrides, "DonationsCreateForm")}
       {...rest}
     >
       <TextField
-        label="Name"
-        isRequired={true}
+        label="Donation"
+        isRequired={false}
         isReadOnly={false}
-        value={name}
+        type="number"
+        step="any"
+        value={Donation}
         onChange={(e) => {
-          let { value } = e.target;
+          let value = isNaN(parseInt(e.target.value))
+            ? e.target.value
+            : parseInt(e.target.value);
           if (onChange) {
             const modelFields = {
-              name: value,
-              sub,
+              Donation: value,
             };
             const result = onChange(modelFields);
-            value = result?.name ?? value;
+            value = result?.Donation ?? value;
           }
-          if (errors.name?.hasError) {
-            runValidationTasks("name", value);
+          if (errors.Donation?.hasError) {
+            runValidationTasks("Donation", value);
           }
-          setName(value);
+          setDonation(value);
         }}
-        onBlur={() => runValidationTasks("name", name)}
-        errorMessage={errors.name?.errorMessage}
-        hasError={errors.name?.hasError}
-        {...getOverrideProps(overrides, "name")}
-      ></TextField>
-      <TextField
-        label="Sub"
-        isRequired={true}
-        isReadOnly={false}
-        value={sub}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              name,
-              sub: value,
-            };
-            const result = onChange(modelFields);
-            value = result?.sub ?? value;
-          }
-          if (errors.sub?.hasError) {
-            runValidationTasks("sub", value);
-          }
-          setSub(value);
-        }}
-        onBlur={() => runValidationTasks("sub", sub)}
-        errorMessage={errors.sub?.errorMessage}
-        hasError={errors.sub?.hasError}
-        {...getOverrideProps(overrides, "sub")}
+        onBlur={() => runValidationTasks("Donation", Donation)}
+        errorMessage={errors.Donation?.errorMessage}
+        hasError={errors.Donation?.hasError}
+        {...getOverrideProps(overrides, "Donation")}
       ></TextField>
       <Flex
         justifyContent="space-between"

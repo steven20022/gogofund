@@ -6,13 +6,7 @@
 
 /* eslint-disable */
 import * as React from "react";
-import {
-  Button,
-  Flex,
-  Grid,
-  TextAreaField,
-  TextField,
-} from "@aws-amplify/ui-react";
+import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
 import { getOverrideProps } from "@aws-amplify/ui-react/internal";
 import { Fundraisers } from "../models";
 import { fetchByPath, validateField } from "./utils";
@@ -33,6 +27,7 @@ export default function FundraisersCreateForm(props) {
     Description: "",
     Goal: "",
     EndDate: "",
+    User: "",
     userID: "",
   };
   const [Name, setName] = React.useState(initialValues.Name);
@@ -41,6 +36,7 @@ export default function FundraisersCreateForm(props) {
   );
   const [Goal, setGoal] = React.useState(initialValues.Goal);
   const [EndDate, setEndDate] = React.useState(initialValues.EndDate);
+  const [User, setUser] = React.useState(initialValues.User);
   const [userID, setUserID] = React.useState(initialValues.userID);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
@@ -48,21 +44,16 @@ export default function FundraisersCreateForm(props) {
     setDescription(initialValues.Description);
     setGoal(initialValues.Goal);
     setEndDate(initialValues.EndDate);
+    setUser(initialValues.User);
     setUserID(initialValues.userID);
     setErrors({});
   };
   const validations = {
     Name: [{ type: "Required" }],
     Description: [{ type: "Required" }],
-    Goal: [
-      { type: "Required" },
-      {
-        type: "GreaterThanNum",
-        numValues: [0],
-        validationMessage: "The fundraiser goal must be greater than 0",
-      },
-    ],
+    Goal: [{ type: "Required" }],
     EndDate: [{ type: "Required" }],
+    User: [{ type: "Required" }],
     userID: [{ type: "Required" }],
   };
   const runValidationTasks = async (
@@ -70,10 +61,9 @@ export default function FundraisersCreateForm(props) {
     currentValue,
     getDisplayValue
   ) => {
-    const value =
-      currentValue && getDisplayValue
-        ? getDisplayValue(currentValue)
-        : currentValue;
+    const value = getDisplayValue
+      ? getDisplayValue(currentValue)
+      : currentValue;
     let validationResponse = validateField(value, validations[fieldName]);
     const customValidator = fetchByPath(onValidate, fieldName);
     if (customValidator) {
@@ -95,6 +85,7 @@ export default function FundraisersCreateForm(props) {
           Description,
           Goal,
           EndDate,
+          User,
           userID,
         };
         const validationResponses = await Promise.all(
@@ -154,6 +145,7 @@ export default function FundraisersCreateForm(props) {
               Description,
               Goal,
               EndDate,
+              User,
               userID,
             };
             const result = onChange(modelFields);
@@ -169,10 +161,11 @@ export default function FundraisersCreateForm(props) {
         hasError={errors.Name?.hasError}
         {...getOverrideProps(overrides, "Name")}
       ></TextField>
-      <TextAreaField
+      <TextField
         label="Description"
         isRequired={true}
         isReadOnly={false}
+        value={Description}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
@@ -181,6 +174,7 @@ export default function FundraisersCreateForm(props) {
               Description: value,
               Goal,
               EndDate,
+              User,
               userID,
             };
             const result = onChange(modelFields);
@@ -195,7 +189,7 @@ export default function FundraisersCreateForm(props) {
         errorMessage={errors.Description?.errorMessage}
         hasError={errors.Description?.hasError}
         {...getOverrideProps(overrides, "Description")}
-      ></TextAreaField>
+      ></TextField>
       <TextField
         label="Goal"
         isRequired={true}
@@ -213,6 +207,7 @@ export default function FundraisersCreateForm(props) {
               Description,
               Goal: value,
               EndDate,
+              User,
               userID,
             };
             const result = onChange(modelFields);
@@ -242,6 +237,7 @@ export default function FundraisersCreateForm(props) {
               Description,
               Goal,
               EndDate: value,
+              User,
               userID,
             };
             const result = onChange(modelFields);
@@ -258,6 +254,35 @@ export default function FundraisersCreateForm(props) {
         {...getOverrideProps(overrides, "EndDate")}
       ></TextField>
       <TextField
+        label="User"
+        isRequired={true}
+        isReadOnly={false}
+        value={User}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              Name,
+              Description,
+              Goal,
+              EndDate,
+              User: value,
+              userID,
+            };
+            const result = onChange(modelFields);
+            value = result?.User ?? value;
+          }
+          if (errors.User?.hasError) {
+            runValidationTasks("User", value);
+          }
+          setUser(value);
+        }}
+        onBlur={() => runValidationTasks("User", User)}
+        errorMessage={errors.User?.errorMessage}
+        hasError={errors.User?.hasError}
+        {...getOverrideProps(overrides, "User")}
+      ></TextField>
+      <TextField
         label="User id"
         isRequired={true}
         isReadOnly={false}
@@ -270,6 +295,7 @@ export default function FundraisersCreateForm(props) {
               Description,
               Goal,
               EndDate,
+              User,
               userID: value,
             };
             const result = onChange(modelFields);

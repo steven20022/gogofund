@@ -5,7 +5,7 @@
  **************************************************************************/
 
 import * as React from "react";
-import { GridProps, TextAreaFieldProps, TextFieldProps } from "@aws-amplify/ui-react";
+import { GridProps, TextFieldProps } from "@aws-amplify/ui-react";
 import { EscapeHatchProps } from "@aws-amplify/ui-react/internal";
 export declare type ValidationResponse = {
     hasError: boolean;
@@ -17,6 +17,7 @@ export declare type FundraisersCreateFormInputValues = {
     Description?: string;
     Goal?: number;
     EndDate?: string;
+    User?: string;
     userID?: string;
 };
 export declare type FundraisersCreateFormValidationValues = {
@@ -24,15 +25,17 @@ export declare type FundraisersCreateFormValidationValues = {
     Description?: ValidationFunction<string>;
     Goal?: ValidationFunction<number>;
     EndDate?: ValidationFunction<string>;
+    User?: ValidationFunction<string>;
     userID?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type FundraisersCreateFormOverridesProps = {
     FundraisersCreateFormGrid?: PrimitiveOverrideProps<GridProps>;
     Name?: PrimitiveOverrideProps<TextFieldProps>;
-    Description?: PrimitiveOverrideProps<TextAreaFieldProps>;
+    Description?: PrimitiveOverrideProps<TextFieldProps>;
     Goal?: PrimitiveOverrideProps<TextFieldProps>;
     EndDate?: PrimitiveOverrideProps<TextFieldProps>;
+    User?: PrimitiveOverrideProps<TextFieldProps>;
     userID?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type FundraisersCreateFormProps = React.PropsWithChildren<{

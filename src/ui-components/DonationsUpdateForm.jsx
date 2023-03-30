@@ -8,12 +8,13 @@
 import * as React from "react";
 import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
 import { getOverrideProps } from "@aws-amplify/ui-react/internal";
-import { User } from "../models";
+import { Donations } from "../models";
 import { fetchByPath, validateField } from "./utils";
 import { DataStore } from "aws-amplify";
-export default function UserCreateForm(props) {
+export default function DonationsUpdateForm(props) {
   const {
-    clearOnSuccess = true,
+    id: idProp,
+    donations,
     onSuccess,
     onError,
     onSubmit,
@@ -23,20 +24,30 @@ export default function UserCreateForm(props) {
     ...rest
   } = props;
   const initialValues = {
-    name: "",
-    sub: "",
+    Donation: "",
   };
-  const [name, setName] = React.useState(initialValues.name);
-  const [sub, setSub] = React.useState(initialValues.sub);
+  const [Donation, setDonation] = React.useState(initialValues.Donation);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
-    setName(initialValues.name);
-    setSub(initialValues.sub);
+    const cleanValues = donationsRecord
+      ? { ...initialValues, ...donationsRecord }
+      : initialValues;
+    setDonation(cleanValues.Donation);
     setErrors({});
   };
+  const [donationsRecord, setDonationsRecord] = React.useState(donations);
+  React.useEffect(() => {
+    const queryData = async () => {
+      const record = idProp
+        ? await DataStore.query(Donations, idProp)
+        : donations;
+      setDonationsRecord(record);
+    };
+    queryData();
+  }, [idProp, donations]);
+  React.useEffect(resetStateValues, [donationsRecord]);
   const validations = {
-    name: [{ type: "Required" }],
-    sub: [{ type: "Required" }],
+    Donation: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -63,8 +74,7 @@ export default function UserCreateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          name,
-          sub,
+          Donation,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -94,12 +104,13 @@ export default function UserCreateForm(props) {
               modelFields[key] = undefined;
             }
           });
-          await DataStore.save(new User(modelFields));
+          await DataStore.save(
+            Donations.copyOf(donationsRecord, (updated) => {
+              Object.assign(updated, modelFields);
+            })
+          );
           if (onSuccess) {
             onSuccess(modelFields);
-          }
-          if (clearOnSuccess) {
-            resetStateValues();
           }
         } catch (err) {
           if (onError) {
@@ -107,71 +118,50 @@ export default function UserCreateForm(props) {
           }
         }
       }}
-      {...getOverrideProps(overrides, "UserCreateForm")}
+      {...getOverrideProps(overrides, "DonationsUpdateForm")}
       {...rest}
     >
       <TextField
-        label="Name"
-        isRequired={true}
+        label="Donation"
+        isRequired={false}
         isReadOnly={false}
-        value={name}
+        type="number"
+        step="any"
+        value={Donation}
         onChange={(e) => {
-          let { value } = e.target;
+          let value = isNaN(parseInt(e.target.value))
+            ? e.target.value
+            : parseInt(e.target.value);
           if (onChange) {
             const modelFields = {
-              name: value,
-              sub,
+              Donation: value,
             };
             const result = onChange(modelFields);
-            value = result?.name ?? value;
+            value = result?.Donation ?? value;
           }
-          if (errors.name?.hasError) {
-            runValidationTasks("name", value);
+          if (errors.Donation?.hasError) {
+            runValidationTasks("Donation", value);
           }
-          setName(value);
+          setDonation(value);
         }}
-        onBlur={() => runValidationTasks("name", name)}
-        errorMessage={errors.name?.errorMessage}
-        hasError={errors.name?.hasError}
-        {...getOverrideProps(overrides, "name")}
-      ></TextField>
-      <TextField
-        label="Sub"
-        isRequired={true}
-        isReadOnly={false}
-        value={sub}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              name,
-              sub: value,
-            };
-            const result = onChange(modelFields);
-            value = result?.sub ?? value;
-          }
-          if (errors.sub?.hasError) {
-            runValidationTasks("sub", value);
-          }
-          setSub(value);
-        }}
-        onBlur={() => runValidationTasks("sub", sub)}
-        errorMessage={errors.sub?.errorMessage}
-        hasError={errors.sub?.hasError}
-        {...getOverrideProps(overrides, "sub")}
+        onBlur={() => runValidationTasks("Donation", Donation)}
+        errorMessage={errors.Donation?.errorMessage}
+        hasError={errors.Donation?.hasError}
+        {...getOverrideProps(overrides, "Donation")}
       ></TextField>
       <Flex
         justifyContent="space-between"
         {...getOverrideProps(overrides, "CTAFlex")}
       >
         <Button
-          children="Clear"
+          children="Reset"
           type="reset"
           onClick={(event) => {
             event.preventDefault();
             resetStateValues();
           }}
-          {...getOverrideProps(overrides, "ClearButton")}
+          isDisabled={!(idProp || donations)}
+          {...getOverrideProps(overrides, "ResetButton")}
         ></Button>
         <Flex
           gap="15px"
@@ -181,7 +171,10 @@ export default function UserCreateForm(props) {
             children="Submit"
             type="submit"
             variation="primary"
-            isDisabled={Object.values(errors).some((e) => e?.hasError)}
+            isDisabled={
+              !(idProp || donations) ||
+              Object.values(errors).some((e) => e?.hasError)
+            }
             {...getOverrideProps(overrides, "SubmitButton")}
           ></Button>
         </Flex>

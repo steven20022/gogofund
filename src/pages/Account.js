@@ -16,7 +16,7 @@ function Account (){
         <main>
 			<h1>Account</h1>
 			<br />
-			<h2>Hello {user.}</h2>
+			<h2>Hello {user.username}</h2>
 			<button onClick={signOut}>Sign out</button>
         </main>
       )}
