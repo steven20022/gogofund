@@ -2,15 +2,15 @@ import { Badge, Card, Flex } from '@aws-amplify/ui-react';
 import React, { useEffect, useState } from 'react';
 
 import { DataStore } from '@aws-amplify/datastore';
-import { Donations } from '../models';
-import { DonationsCreateForm } from '../ui-components';
+import { Fundraiser } from '../models';
 import { Button, Layout, List } from 'antd';
 import { Content } from 'antd/es/layout/layout';
 import { Link, useNavigate } from 'react-router-dom';
+import FundraiserComponent from '../components/Fundraisers';
 
 function Discover() {
 
-	const [donations, setdonations] = useState([])
+	const [fundraisers, setFundraisers] = useState([])
 
 	const navigate = useNavigate();
 
@@ -19,39 +19,23 @@ function Discover() {
 	// }, [])
 	
 	async function getData() {
-		const models = await DataStore.query(Donations);
+		const models = await DataStore.query(Fundraiser);
 		console.log(models);
-		setdonations(models);
-	}
-
-	const genTemp = async() => {
-		await DataStore.save(
-			new Donations({
-				"Donation": 1020,
-				"sub": "Lorem ipsum dolor sit amet"
-			})
-		);
+		setFundraisers(models);
 	}
 
 	return(
 		<Layout>
 			<Content>
 				<List 
-					dataSource={donations}
-					renderItem={(item, index) =>{
+					dataSource={fundraisers}
+					renderItem={(item) =>{
 						return(
-							<Card>
-								<Badge size='small' variation='info'>Donation Number: {index}</Badge>
-								<Flex direction={'row'}><h1>Donation Amount: </h1><p>{item.Donation}</p></Flex>
-								<Flex direction={'row'}><h1>Donation Amount: </h1><p>{item.Donation}</p></Flex>
-								
-							</Card>
+							<FundraiserComponent props={item} />
 						)
 					}}
 				
 				/>	
-				<DonationsCreateForm onSubmit={navigate('/discover')} on/>	
-				<Button onClick={() => genTemp()} > Temp Data </Button>	
 				<Button onClick={() => getData()} > Reload Data </Button>	
 			</Content>
 

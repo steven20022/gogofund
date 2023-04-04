@@ -3,7 +3,6 @@ import { Content } from 'antd/es/layout/layout'
 import Sider from 'antd/es/layout/Sider'
 import React, { useState } from 'react'
 import funds from '../TempData/funds.json'
-import Donation from '../ui-components/Donation'
 import imgsrc from '../images/images.jpg'
 
 const FundraiserPage = (props) => {

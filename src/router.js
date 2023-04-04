@@ -9,6 +9,7 @@ import Account from './pages/Account';
 import { Menu, MenuButton, MenuItem, TabItem, Tabs } from '@aws-amplify/ui-react';
 import FundraiserPage from './pages/Fundraiser';
 import '@aws-amplify/ui-react/styles.css';
+import { Auth } from 'aws-amplify';
 
 
 
@@ -21,6 +22,7 @@ function AppRouter() {
     };
 
     const closeMenu = () => setIsOpen(false);
+    const signout = async() => await Auth.signOut();
   
     return (
         <Router>
@@ -33,6 +35,9 @@ function AppRouter() {
                 </MenuItem>
                 <MenuItem>
                     <Link to="/Account" onClick={() => {closeMenu()}}> Account </Link>
+                </MenuItem>
+                <MenuItem>
+                    <Link to="/Home" onClick={() => {signout()}}> Signout </Link>
                 </MenuItem>
             </Menu>
             <Routes>

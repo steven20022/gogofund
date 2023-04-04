@@ -1,7 +1,17 @@
+import { Card, Flex, Heading, Text } from '@aws-amplify/ui-react';
 import React from 'react';
 
-function Fundraisers (){
-	return <h1>Welcome to the world of Geeks!</h1>
+function FundraiserComponent (props){
+	return (
+		<Card>
+			<Heading level={5}>
+				{props.title}
+			</Heading>
+			<Text as='span'>
+				{props.description}
+			</Text>
+		</Card>
+	)
 }
 
-export default Fundraisers;
+export default FundraiserComponent;
