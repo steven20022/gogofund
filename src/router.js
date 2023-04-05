@@ -44,7 +44,7 @@ function AppRouter() {
                 <Route exact path='/'  element={<Home />} />
                 <Route path='/discover' element={<Discover />} />
                 <Route path='/account' element={<Account />} />
-                <Route path='/fund' element={<FundraiserPage />} />
+                <Route path='/fund/:id' element={<FundraiserPage />} />
                 <Route path='*' element={<Home />} />
             </Routes>
         </Router>

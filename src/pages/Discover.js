@@ -1,27 +1,27 @@
-import { Badge, Card, Flex } from '@aws-amplify/ui-react';
 import React, { useEffect, useState } from 'react';
 
 import { DataStore } from '@aws-amplify/datastore';
 import { Fundraiser } from '../models';
-import { Button, Layout, List } from 'antd';
+import { Layout, List } from 'antd';
 import { Content } from 'antd/es/layout/layout';
-import { Link, useNavigate } from 'react-router-dom';
 import FundraiserComponent from '../components/Fundraisers';
+import { Link } from 'react-router-dom';
 
 function Discover() {
 
 	const [fundraisers, setFundraisers] = useState([])
 
-	const navigate = useNavigate();
+	useEffect(() => {
+		const getData = async () => {
+			const models = await DataStore.query(Fundraiser);
+			// console.log(models);
+			setFundraisers(models);
+		}
+		getData()
+	}, [])
 
-	// useEffect(() => {
-	//   	DataStore.query(Donations).then((donation) => {setdonations(donation); console.log(donation);});
-	// }, [])
-	
-	async function getData() {
-		const models = await DataStore.query(Fundraiser);
-		console.log(models);
-		setFundraisers(models);
+	function onClick() {
+
 	}
 
 	return(
@@ -31,12 +31,15 @@ function Discover() {
 					dataSource={fundraisers}
 					renderItem={(item) =>{
 						return(
-							<FundraiserComponent props={item} />
+							<Link to={`/fund/${item.id}`}>
+								<FundraiserComponent fund={item} />
+							</Link>
+							
 						)
 					}}
 				
 				/>	
-				<Button onClick={() => getData()} > Reload Data </Button>	
+				{/* <Button onClick={() => getData()} > Reload Data </Button>	 */}
 			</Content>
 
 		</Layout>

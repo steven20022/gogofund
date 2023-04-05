@@ -5,5 +5,6 @@
  **************************************************************************/
 
 export { default as studioTheme } from "./studioTheme";
+export { default as CreateDonation } from "./CreateDonation";
 export { default as FundraiserCreateForm } from "./FundraiserCreateForm";
 export { default as FundraiserUpdateForm } from "./FundraiserUpdateForm";

@@ -1,0 +1,18 @@
+type Fundraiser @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  title: String!
+  description: String!
+  endDate: AWSDate!
+  fundGoal: Float!
+  Donations: [Donation] @hasMany(indexName: "byFundraiser", fields: ["id"])
+  sub: String!
+}
+
+type Donation @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  donationAmount: Float!
+  donatorName: String!
+  sub: String!
+  fundraiserID: ID! @index(name: "byFundraiser")
+}
+ 
