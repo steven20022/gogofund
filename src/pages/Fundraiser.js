@@ -2,7 +2,6 @@ import { Alert, Button, Image, Layout, List } from 'antd'
 import { Content } from 'antd/es/layout/layout'
 import Sider from 'antd/es/layout/Sider'
 import React, { useEffect, useState } from 'react'
-import funds from '../TempData/funds.json'
 import imgsrc from '../images/images.jpg'
 import { useParams } from 'react-router'
 import { DataStore } from '@aws-amplify/datastore';
@@ -40,12 +39,15 @@ const FundraiserPage = (props) => {
 			const models = await DataStore.query(Donation, (c) => c.fundraiserID.eq(id));
 			setDonations(models);
             setBrickCount(models.length);
-            console.log(donations.length);
 		}
 		getData()
 	}, [])
 
     const [brickCount, setBrickCount] = useState(donations.length)
+
+    const brickContent = (index) => `
+        Donation Amount ${donations[index]}
+    `
 
     const genBricks = Array(brickCount).fill().map((_, index) => {
         return {
@@ -61,6 +63,22 @@ const FundraiserPage = (props) => {
 	}
 	getDonationTotal()
     console.log(donations);
+
+    const [isOpen, setIsOpen] = useState(false);
+
+    const handleOpen = () => {
+        setIsOpen(true);
+    };
+
+    const handleClose = () => {
+        setIsOpen(false);
+    };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        // Handle form submission here
+    };
+
     return (
         <Layout>
             <Sider style={{height: "100%"}}>
