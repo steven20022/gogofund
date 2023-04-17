@@ -1,91 +1,67 @@
-import React, { useState } from "react";
-import Stripe from "stripe";
+import { Button, Form, Input, Modal, message } from "antd";
+import { Content } from "antd/es/layout/layout";
+import { Auth, DataStore } from "aws-amplify";
+import React, { useEffect, useState } from "react";
+import { Donation } from "../models";
 
-const stripe = Stripe("pk_test_51MvhnUIk1O3K7lNJcodnVw7btQUs0UbG00LedY3n3yAcdABvS02SmQSmeFnPm8nuG7tm5y3jJl9HOe3WpGyPEHnf00YNCKBHBH");
-const DonateFormComponent = () => {
+const DonateFormComponent = (props) => {
+    console.log(props);
+    const [form] = Form.useForm();
+
+    const [open, setOpen] = useState(false)
     const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [cardNumber, setCardNumber] = useState("");
-    const [expiryMonth, setExpiryMonth] = useState("");
-    const [expiryYear, setExpiryYear] = useState("");
-    const [cvc, setCvc] = useState("");
+    const [amount, setAmount] = useState(0);
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-    
-        const { error, paymentMethod } = await stripe.createPaymentMethod({
-        type: "card",
-        card: {
-            number: cardNumber,
-            exp_month: expiryMonth,
-            exp_year: expiryYear,
-            cvc: cvc,
-        },
-        billing_details: {
-            name: name,
-            email: email,
-        },
-        });
-    
-        if (error) {
-        console.log(error);
-        } else {
-        console.log(paymentMethod);
-        }
+    const [user, setUser] = useState({});
+
+    useEffect(() => {
+        Auth.currentAuthenticatedUser().then((user) => setUser(user));
+      }, [])
+
+    const layout = {
+        labelcol: { span: 8 },
+        wrappercol: { span: 16 },
     };
     
+    const tailLayout = {
+        wrapperCol: { offset: 8, span: 16 },
+    };
+
+    const onFinish = async (values) => {
+        await DataStore.save(
+            new Donation({
+                "donationAmount": parseInt(values.donationAmount),
+                "donatorName": values.donatorName,
+                "sub": user.username,
+                "fundraiserID": props.fund[0].id
+            })
+        ).then(() => {
+            message.success('Donation Successful') 
+            setOpen(false)
+    })
+    } 
+
     return (
-        <form onSubmit={handleSubmit}>
-        <label>
-            Name
-            <input
-            type="text"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            />
-        </label>
-        <label>
-            Email
-            <input
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            />
-        </label>
-        <label>
-            Card Number
-            <input
-            type="text"
-            value={cardNumber}
-            onChange={(event) => setCardNumber(event.target.value)}
-            />
-        </label>
-        <label>
-            Expiry Month
-            <input
-            type="text"
-            value={expiryMonth}
-            onChange={(event) => setExpiryMonth(event.target.value)}
-            />
-        </label>
-        <label>
-            Expiry Year
-            <input
-            type="text"
-            value={expiryYear}
-            onChange={(event) => setExpiryYear(event.target.value)}
-            />
-        </label>
-        <label>
-            CVC
-            <input
-            type="text"
-            value={cvc}
-            onChange={(event) => setCvc(event.target.value)}
-            />
-        </label>
-        <button type="submit">Pay Now</button>
-        </form>
+        <Content>
+            <Button onClick={() => setOpen(true)}>
+                <p>Donate Now</p>
+            </Button>
+            <Modal open={open}  onCancel={() => setOpen(false)} onOk={() => setOpen(false)} footer={[]}>
+                <Form form={form} {...layout} name='Donation Form' autoComplete="off" layout='vertical' onFinish={onFinish}>
+                    <Form.Item name="donatorName"  label="Donator's Name" required>
+                        <Input value={name} onChange={setName} />
+                    </Form.Item>
+                    <Form.Item name="donationAmount"  label="Donation Amount" required>
+                        <Input value={amount} onChange={setAmount} />
+                    </Form.Item>
+                    <Form.Item {...tailLayout}>
+                        <Button type='primary' htmlType='submit'>
+                            Donate
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </Modal>
+        </Content>
     );
       
 }
