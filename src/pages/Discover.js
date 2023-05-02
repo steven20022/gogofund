@@ -20,10 +20,6 @@ function Discover() {
 		getData()
 	}, [])
 
-	function onClick() {
-
-	}
-
 	return(
 		<Layout>
 			<Content>

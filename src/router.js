@@ -3,52 +3,62 @@ import './App.css';
 // import Navbar from './components/Navbar';
 import { BrowserRouter as Router, Routes, Route, Link}
 	from 'react-router-dom';
-import Home from './pages/Home';
 import Discover from './pages/Discover';
 import Account from './pages/Account';
-import { Menu, MenuButton, MenuItem, TabItem, Tabs } from '@aws-amplify/ui-react';
 import FundraiserPage from './pages/Fundraiser';
 import '@aws-amplify/ui-react/styles.css';
 import { Auth } from 'aws-amplify';
-
-
+import { Menu } from 'antd';
+import { LogoutOutlined, GlobalOutlined, UserOutlined } from '@ant-design/icons'
 
 function AppRouter() {
 
-    const [isOpen, setIsOpen] = useState(false);
-
-    const handleOpenChange = (open) => {
-        setIsOpen(open);
-    };
-
-    const closeMenu = () => setIsOpen(false);
     const signout = async() => await Auth.signOut();
+
+    const navItems = [
+        {
+            label: <Link style={linkStyle} to="/discover"> Discover </Link>,
+            key: 'discover',
+            icon: <GlobalOutlined color='white' />
+        },
+        {
+            label: <Link style={linkStyle} to="/Account"> Account </Link>,
+            key: 'account',
+            icon: <UserOutlined />
+        },
+        {
+            label: <Link style={signoutStyle} to="/" onClick={() => {signout()}}> Signout </Link>,
+            key: 'signout',
+            icon: <LogoutOutlined />
+        },
+    ]
+
+    const [currentKey, setCurrentKey] = useState('discover')
+
+    const onClick = (e) => {
+        console.log(e);
+        setCurrentKey(e.key)
+    }
   
     return (
         <Router>
-            <Menu isOpen={isOpen} onOpenChange={handleOpenChange} style={{justifyContent: 'center'}} >
-                <MenuItem >
-                    <Link to="/" onClick={() => {closeMenu()}}> Home </Link>
-                </MenuItem>
-                <MenuItem>
-                    <Link to="/discover" onClick={() => {closeMenu()}}> Discover </Link>
-                </MenuItem>
-                <MenuItem>
-                    <Link to="/Account" onClick={() => {closeMenu()}}> Account </Link>
-                </MenuItem>
-                <MenuItem>
-                    <Link to="/Home" onClick={() => {signout()}}> Signout </Link>
-                </MenuItem>
-            </Menu>
-            <Routes>
-                <Route exact path='/'  element={<Home />} />
+            <Menu items={navItems} onClick={onClick} selectedKeys={currentKey} mode='horizontal' style={{ height: '7vh', justifyContent: 'center', backgroundColor: '#0a1428'}} />
+            <Routes style={{height: '93vh'}} >
+                <Route  exact path='/'  element={<Discover />} />
                 <Route path='/discover' element={<Discover />} />
                 <Route path='/account' element={<Account />} />
                 <Route path='/fund/:id' element={<FundraiserPage />} />
-                <Route path='*' element={<Home />} />
+                <Route path='*' element={<Discover />} />
             </Routes>
         </Router>
     );
+}
+
+const linkStyle ={
+    color: 'white'
+}
+const signoutStyle ={
+    color: 'red'
 }
 
 export default AppRouter;

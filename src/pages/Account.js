@@ -1,94 +1,123 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Input, Layout, List, Modal, message } from 'antd'
+import { Button, Divider, Form, Input, Layout, List, Modal, Popconfirm, message } from 'antd'
 import { Amplify, Auth, DataStore } from 'aws-amplify';
-import { Authenticator, Tabs } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import awsExports from '../aws-exports';
-import { Fundraiser } from '../models';
+import { Donation, Fundraiser } from '../models';
 import FundraiserComponent from '../components/Fundraisers';
+import { TabItem, Tabs } from '@aws-amplify/ui-react';
+import DonationComponent from '../components/Donations';
+import FundraiserFormComponent from '../components/FundraiserForm';
+import FormItem from 'antd/es/form/FormItem';
+import { useForm, useWatch } from 'antd/es/form/Form';
 Amplify.configure(awsExports);
 
 const { Header, Sider, Content } = Layout;
 
 function Account (){
-  
-  const [user, setUser] = useState({})
-  const [open, setOpen] = useState(false);
-  const [confirmLoading, setConfirmLoading] = useState(false);
-  const [password, setPassword] = useState('');
-  const [passwordOld, setPasswordOld] = useState('');
 
-  useEffect(() => {
+  const form = useForm()
+
+  const tempUser = {
+    attributes: {
+      name:'',
+      sub:'null'
+    }
+  }
+
+  const tempFund = [{
+    id: "",
+    title: '',
+    description: '',
+    endDate: '',
+    fundGoal: ''
+  }]
+
+  const tempDono = [{
+    id: '',
+    donatorName: '',
+    donationAmount: '',
+    sub: '',
+    fundraiserID: ''
+  }]
+
+ 
+  const [user, setUser] = useState(tempUser)
+  const [fundraisers, setFundraisers] = useState(tempFund)
+  const [donations, setDonations] = useState(tempDono)
+
+  useEffect(()  => {
     Auth.currentAuthenticatedUser().then((user) => setUser(user));
   }, [])
   
   console.log(user);
-  console.log(user.attributes);
+  console.log(user.attributes.name);
 
-
-  const handleOk = async () => {
-    setConfirmLoading(true)
-    await Auth.changePassword(user, passwordOld, password).then((res) => {
-      if (res === "SUCCESS") {
-        message.success('Successfully Updated Password')
-      } else {
-        message.error('Error \n' + res)
-      }
-      setOpen(false)
-    })
-
-  }
-
-  const [fundraisers, setFundraisers] = useState([])
-
+  console.log(fundraisers);
 	useEffect(() => {
-		const getData = async () => {
-			const models = await DataStore.query(Fundraiser, (c) => c.sub.eq(user.username));
-			// console.log(models);
+		const getFundData = async () => {
+			const models = await DataStore.query(Fundraiser, (c) => c.sub.eq(user.attributes.sub));
 			setFundraisers(models);
 		}
-		getData()
-	}, [])
+		getFundData()
+	}, [user.attributes.sub])
+	useEffect(() => {
+		const getDonoData = async () => {
+			const models = await DataStore.query(Donation, (c) => c.sub.eq(user.attributes.sub));
+			setDonations(models);
+		}
+		getDonoData()
+	}, [user.attributes.sub])
+
+  const onConfirm = async (item) => {
+    await DataStore.delete(Fundraiser, (c) => c.id.eq(item.id)).then(window.location.reload(true))
+  }
 
   return (
     <Layout>
       <Header style={headerStyle}>
         Account Hello, {user.username}
       </Header>
-      <Layout>
-        <Sider style={siderStyle}>
-          <h1>Account Settings</h1>
-          <Button onClick={() => setOpen(true)}>
-            <p>Change Username</p>
-          </Button>
-          <Modal 
-            title="Change Password"
-            open={open}
-            onOk={handleOk}
-            confirmLoading={confirmLoading}
-            onCancel={() => setOpen(false)}
-          >
-            <Input.Password
-              placeholder='Enter old pass'
-              onChange={(pass) => setPasswordOld(pass)}
-            />
-            <Input.Password
-              placeholder='Enter new pass'
-              onChange={(pass) => setPassword(pass)}
-            />
-          </Modal>
-        </Sider>
+      <Layout style={{height: "100%"}}>
         <Content>
-        <List 
-					dataSource={fundraisers}
-					renderItem={(item) =>{
-            console.log(item);
-						return(
-								<FundraiserComponent fund={item} />
-						)
-					}}
-				
-				/>	
+          <Tabs justifyContent={'center'}>
+            <TabItem title={'My Fundraisers'}>
+              <List 
+                dataSource={fundraisers}
+                renderItem={(item) =>{
+                  console.log(item);
+                  return(
+                    <Popconfirm
+                      title="Delete?"
+                      description={`Would you like to delete ${item.title}`}
+                      placement='top'
+                      onConfirm={(item) => onConfirm(item)}
+                      okText='yes'
+                      cancelText='no'
+                    >
+
+                      <FundraiserComponent fund={item} />
+                      <Divider />
+                    </Popconfirm>
+                  )
+                }}
+              />
+            </TabItem>
+            <TabItem title={'My Donations'}>
+              <List 
+                dataSource={donations}
+                renderItem={(item) =>{
+                  console.log(item);
+                  return(
+                      <DonationComponent dono={item} />
+                  )
+                }}
+              />
+            </TabItem>
+            <TabItem title={'Create Fundraiser'}>
+              <FundraiserFormComponent />
+            </TabItem>
+          </Tabs>
         </Content>
       </Layout>
     </Layout>
@@ -103,6 +132,7 @@ const headerStyle = {
 }
 const siderStyle = {
   textAlign: 'center',
+  lineHeight: "100%",
   color: '#fff',
   height: '100%',
   backgroundColor: '#283c78'

@@ -1,4 +1,4 @@
-import { Form, Input, Button, Layout, List, message } from 'antd';
+import { Layout, List, message } from 'antd';
 import { Content } from 'antd/es/layout/layout'
 import Sider from 'antd/es/layout/Sider'
 import React, { useEffect, useState } from 'react'
@@ -6,7 +6,6 @@ import imgsrc from '../images/images.jpg'
 import { useParams } from 'react-router'
 import { DataStore } from '@aws-amplify/datastore';
 import { Donation, Fundraiser } from '../models';
-import { CreateDonation } from '../ui-components';
 import DonateFormComponent from '../components/DonateForm';
 const AWS = require('aws-sdk');
 
@@ -14,12 +13,9 @@ const FundraiserPage = (props) => {
 
     console.log(props);
     const layout = {
+        height: '100%',
         labelcol: { span: 8 },
         wrappercol: { span: 16 },
-      };
-      
-      const tailLayout = {
-        wrapperCol: { offset: 8, span: 16 },
       };
 
     const [users, setUsers] = useState([])
@@ -32,11 +28,9 @@ const FundraiserPage = (props) => {
     }
 
     try {
-        useEffect(() => {
-            
+
             getUsers()
-            
-        }, [])
+
         console.log(users);
     } catch (error) {
         console.error(error);        
@@ -64,7 +58,7 @@ const FundraiserPage = (props) => {
             setFundraiser(models);
         }
         getData()
-    }, [])
+    }, [id])
 
     const [donations, setDonations] = useState([])
 	var total = 0;
@@ -76,14 +70,14 @@ const FundraiserPage = (props) => {
             setBrickCount(models.length);
 		}
 		getData()
-	},[] )
+	},[id] )
 
     const [brickCount, setBrickCount] = useState(donations.length)
 
     const genBricks = Array(brickCount).fill().map((_, index) => {
         return {
             index,
-            content: <img src={imgsrc} alt='A Brick (Mario Style)' onClick={() => onBrickPress(index)}></img>
+            content: <img style={{maxWidth: '10%'}} src={imgsrc} alt='A Brick (Mario Style)' onClick={() => onBrickPress(index)}></img>
         }
     })
 
@@ -96,7 +90,7 @@ const FundraiserPage = (props) => {
     console.log(donations);
 
     return (
-        <Layout {...layout}>
+        <Layout {...layout} style={{height: '100%'}}>
             <Sider style={{height: "100%"}}>
                 <h1 style={{color: 'white'}} >Title: {fundraiser[0].title}</h1>
                 <p style={{color: 'white'}} >Description: {fundraiser[0].description}</p>

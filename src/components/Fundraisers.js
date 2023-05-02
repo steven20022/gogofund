@@ -17,7 +17,7 @@ function FundraiserComponent (props){
 			setDonations(models);
 		}
 		getData()
-	}, [])
+	}, [fund.id])
 
 	const getDonationTotal = () => {
 		donations.forEach((donation) => {
